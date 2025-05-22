@@ -1,13 +1,15 @@
 import { defineComponent, ref } from "vue";
+import { RouterView } from "vue-router";
 export default defineComponent({
   name: "组件名",
   setup(props, ctx) {
-    const demo = "1111";
-    return {
-      demo,
-    };
+    return {};
   },
   render() {
-    return <div>mini知乎</div>;
+    return (
+      <div>
+        <RouterView></RouterView>
+      </div>
+    );
   },
 });

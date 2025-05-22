@@ -49,6 +49,50 @@ export class UserService {
       const salt = await bcrypt.genSalt();
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, salt);
     }
-    return this.userRepository.update(id, updateUserDto);
+    const result = await this.userRepository.update(id, updateUserDto);
+
+    if (result.affected > 0) {
+      return {
+        code: 200,
+        message: '更新成功',
+      };
+    } else {
+      return {
+        code: 400,
+        message: '更新失败',
+      };
+    }
+  }
+
+  async delete(params: { email: string; password: string }) {
+    const user = await this.userRepository.findOneBy({ email: params.email });
+
+    if (!user) {
+      throw new Error('用户不存在');
+    }
+
+    // 验证密码
+    const isPasswordValid = await this.validatePassword(
+      params.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new Error('密码错误');
+    }
+
+    const result = await this.userRepository.delete(+user.id);
+
+    if (result.affected > 0) {
+      return {
+        code: 200,
+        message: '删除成功',
+      };
+    } else {
+      return {
+        code: 400,
+        message: '删除失败',
+      };
+    }
   }
 }

@@ -7,11 +7,12 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { AuthGuard } from './guard/auth.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,6 +22,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/findAllUser')
   findAll() {
     return this.userService.findAll();
@@ -40,5 +42,10 @@ export class UserController {
       password,
       avatar,
     });
+  }
+
+  @Post('/deleteUser')
+  async deleteUser(@Body() params: { email: string; password: string }) {
+    return this.userService.delete(params);
   }
 }
